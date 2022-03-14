@@ -1,0 +1,4 @@
+export const ActionTypes = {
+  DONE_REGISTER: 'DONE_REGISTER',
+  SET_LOADING_REGISTER: 'SET_LOADING_REGISTER',
+};

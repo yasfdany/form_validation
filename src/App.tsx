@@ -7,12 +7,16 @@ import {
   TextInput,
   View,
   ScrollView,
+  Alert,
 } from 'react-native';
 import {useForm, Controller} from 'react-hook-form';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Moment from 'moment';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import {doRegister} from '../src/redux/actions/userActions';
+import {useDispatch, useSelector} from 'react-redux';
+import {ProgressBar} from '@react-native-community/progress-bar-android';
 
 const App = () => {
   const {
@@ -21,10 +25,22 @@ const App = () => {
     formState: {errors},
     getValues,
   } = useForm();
+  const dispatch = useDispatch();
+  const registerResponse = useSelector(state => state.user.registerResponse);
+  const loading = useSelector(state => state.user.loading);
+
   const [openDate, setOpenDate] = useState(false);
 
   const [openDropdown, setOpenDropdown] = useState(false);
-  const onSubmit = data => console.log(data);
+  const onSubmit = data => {
+    dispatch(doRegister(data));
+  };
+
+  useEffect(() => {
+    if (registerResponse?.data?.status === 200) {
+      Alert.alert('Success', registerResponse?.data?.message, [{text: 'OK'}]);
+    }
+  }, [registerResponse]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -277,7 +293,17 @@ const App = () => {
           style={styles.button}
           title="Submit"
           onPress={handleSubmit(onSubmit)}>
-          <Text style={styles.buttonText}>Register</Text>
+          {loading ? (
+            <ProgressBar
+              styleAttr="Normal"
+              indeterminate={false}
+              color="white"
+              progress={0.5}
+              style={styles.progressStyle}
+            />
+          ) : (
+            <Text style={styles.buttonText}>Register</Text>
+          )}
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
@@ -285,6 +311,7 @@ const App = () => {
 };
 
 const styles = StyleSheet.create({
+  progressStyle: {width: 18, height: 18},
   text24: {
     fontSize: 24,
     color: 'black',
