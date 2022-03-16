@@ -17,6 +17,32 @@ export const createUser = (params, onFinish) => async dispatch => {
     });
 };
 
+export const updateUser = (params, onFinish) => async dispatch => {
+  dispatch({
+    type: ActionTypes.SET_LOADING_CREATE,
+    payload: {
+      loading: true,
+    },
+  });
+  await apiClient
+    .post('update-user', params)
+    .then((response: AxiosResponse) => {
+      if (onFinish) {
+        onFinish(response);
+      }
+    });
+};
+
+export const deleteUser = (params, onFinish) => async _ => {
+  await apiClient
+    .delete('delete-user', params)
+    .then((response: AxiosResponse) => {
+      if (onFinish) {
+        onFinish(response);
+      }
+    });
+};
+
 export const getUsers = () => async dispatch => {
   dispatch({
     type: ActionTypes.SET_LOADING_GET_USER,

@@ -14,10 +14,11 @@ import React, {useState, useEffect} from 'react';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Moment from 'moment';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import {createUser} from '../../../redux/actions/userActions';
+import {createUser, updateUser} from '../../../redux/actions/userActions';
 import {useDispatch, useSelector} from 'react-redux';
 import {ProgressBar} from '@react-native-community/progress-bar-android';
 import {useNavigation} from '@react-navigation/native';
+import {ActionTypes} from '../../../redux/constants/actionTypes';
 
 const CreateUserScreen = ({route}) => {
   const {
@@ -35,21 +36,49 @@ const CreateUserScreen = ({route}) => {
 
   const [openDropdown, setOpenDropdown] = useState(false);
   const onSubmit = data => {
-    dispatch(
-      createUser(data, response => {
-        if (response?.data?.status === 200) {
-          Alert.alert('Success', response?.data?.message, [
-            {
-              text: 'OK',
-              onPress: () => {
-                navigation.pop();
+    if (route.params) {
+      dispatch(
+        updateUser(data, response => {
+          hideLoading();
+          if (response?.data?.status === 200) {
+            Alert.alert('Success', response?.data?.message, [
+              {
+                text: 'OK',
+                onPress: () => {
+                  navigation.pop();
+                },
               },
-            },
-          ]);
-        }
-      }),
-    );
+            ]);
+          }
+        }),
+      );
+    } else {
+      dispatch(
+        createUser(data, response => {
+          hideLoading();
+          if (response?.data?.status === 200) {
+            Alert.alert('Success', response?.data?.message, [
+              {
+                text: 'OK',
+                onPress: () => {
+                  navigation.pop();
+                },
+              },
+            ]);
+          }
+        }),
+      );
+    }
   };
+
+  function hideLoading() {
+    dispatch({
+      type: ActionTypes.SET_LOADING_CREATE,
+      payload: {
+        loading: false,
+      },
+    });
+  }
 
   useEffect(() => {
     if (route.params) {
