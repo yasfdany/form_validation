@@ -14,6 +14,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {getUsers} from '../../../redux/actions/userActions';
 import ItemUser from '../../components/ItemUser';
 import {useNavigation} from '@react-navigation/native';
+import {ProgressBar} from '@react-native-community/progress-bar-android';
 
 const UsersScreen = () => {
   const navigation = useNavigation();
@@ -23,11 +24,7 @@ const UsersScreen = () => {
 
   useEffect(() => {
     dispatch(getUsers());
-  }, []);
-
-  useEffect(() => {
-    console.log(response?.data?.data);
-  }, [response]);
+  }, [dispatch]);
 
   return (
     <SafeAreaView style={gs.container}>
@@ -35,22 +32,40 @@ const UsersScreen = () => {
 
       <View style={[gs.flex, gs.column]}>
         <Text style={[gs.black24, gs.m18]}>List User</Text>
-        <FlatList
-          showsVerticalScrollIndicator={false}
-          data={response?.data?.data}
-          style={styles.listStyle}
-          contentContainerStyle={styles.contentListStyle}
-          renderItem={({item, _}) => (
-            <ItemUser user={item} style={styles.itemStyle} />
-          )}
-        />
+
+        {loading ? (
+          <View style={[gs.flex, gs.column, gs.mainCenter]}>
+            <ProgressBar
+              styleAttr="Normal"
+              indeterminate={false}
+              color="blue"
+              progress={0.5}
+            />
+          </View>
+        ) : (
+          <FlatList
+            showsVerticalScrollIndicator={false}
+            data={response?.data?.data}
+            style={styles.listStyle}
+            contentContainerStyle={styles.contentListStyle}
+            renderItem={({item, _}) => (
+              <ItemUser
+                onPress={() => {
+                  navigation.push('CreateUserScreen', item);
+                }}
+                user={item}
+                style={styles.itemStyle}
+              />
+            )}
+          />
+        )}
       </View>
 
       <TouchableOpacity
         style={styles.button}
         title="Submit"
         onPress={() => {
-          navigation.navigate('CreateUserScreen');
+          navigation.push('CreateUserScreen');
         }}>
         <Icon name="add" size={24} color="white" />
       </TouchableOpacity>

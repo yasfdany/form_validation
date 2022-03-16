@@ -60,6 +60,16 @@ export default StyleSheet.create({
     color: 'black',
     fontFamily: 'overpass',
   },
+  black16: {
+    fontSize: 16,
+    color: 'black',
+    fontFamily: 'overpass',
+  },
+  gray16: {
+    fontSize: 16,
+    color: 'gray',
+    fontFamily: 'overpass',
+  },
   black18: {
     fontSize: 18,
     color: 'black',
@@ -77,6 +87,11 @@ export default StyleSheet.create({
   },
   white14: {
     fontSize: 14,
+    color: 'white',
+    fontFamily: 'overpass',
+  },
+  white16: {
+    fontSize: 16,
     color: 'white',
     fontFamily: 'overpass',
   },

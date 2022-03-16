@@ -10,7 +10,7 @@ import {
   Alert,
 } from 'react-native';
 import {useForm, Controller} from 'react-hook-form';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Moment from 'moment';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
@@ -19,12 +19,13 @@ import {useDispatch, useSelector} from 'react-redux';
 import {ProgressBar} from '@react-native-community/progress-bar-android';
 import {useNavigation} from '@react-navigation/native';
 
-const CreateUserScreen = () => {
+const CreateUserScreen = ({route}) => {
   const {
     control,
     handleSubmit,
     formState: {errors},
     getValues,
+    setValue,
   } = useForm();
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -50,11 +51,25 @@ const CreateUserScreen = () => {
     );
   };
 
+  useEffect(() => {
+    if (route.params) {
+      setValue('username', route.params.username, {shouldValidate: true});
+      setValue('email', route.params.email, {shouldValidate: true});
+      setValue('phone', route.params.phone, {shouldValidate: true});
+      setValue('gender', route.params.gender, {shouldValidate: true});
+      setValue('birthdate', new Date(route.params.birthdate + 'T00:00:00'), {
+        shouldValidate: true,
+      });
+    }
+  }, [route.params, setValue]);
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="#ffffff" barStyle={'dark-content'} />
       <ScrollView>
-        <Text style={[styles.text24, styles.mt12]}>Add User</Text>
+        <Text style={[styles.text24, styles.mt12]}>
+          {route.params ? 'Edit User' : 'Add User'}
+        </Text>
         <Text>Create your user here</Text>
         <Controller
           control={control}
@@ -310,7 +325,7 @@ const CreateUserScreen = () => {
               style={styles.progressStyle}
             />
           ) : (
-            <Text style={styles.buttonText}>Register</Text>
+            <Text style={styles.buttonText}>Submit</Text>
           )}
         </TouchableOpacity>
       </ScrollView>
